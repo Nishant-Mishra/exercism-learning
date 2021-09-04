@@ -1,17 +1,3 @@
-"""
-This exercise stub and the test suite contain several enumerated constants.
-
-Since Python 2 does not have the enum module, the idiomatic way to write
-enumerated constants has traditionally been a NAME assigned to an arbitrary,
-but unique value. An integer is traditionally used because it’s memory
-efficient.
-It is a common practice to export both constants and functions that work with
-those constants (ex. the constants in the os, subprocess and re modules).
-
-You can learn more here: https://en.wikipedia.org/wiki/Enumerated_type
-"""
-
-
 from collections import Counter
 from typing import List, Callable
 
@@ -47,11 +33,11 @@ def _four_of_a_kind_score(dice: List[int]) -> int:
 
 
 def _little_straight_score(dice: List[int]) -> int:
-    return 30 if set(dice) == {1, 2, 3, 4, 5} else 0
+    return 30 * (set(dice) == set(range(1, 6)))
 
 
 def _big_straight_score(dice: List[int]) -> int:
-    return 30 if set(dice) == {2, 3, 4, 5, 6} else 0
+    return 30 * (set(dice) == set(range(2, 7)))
 
 
 def _choice_score(dice: List[int]) -> int:
@@ -76,4 +62,5 @@ category_score_map = {
 
 def score(dice, category):
     return category_score_map[category](dice)
+
 
