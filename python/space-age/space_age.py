@@ -14,6 +14,9 @@ So if you were told someone were 1,000,000,000 seconds old, you should be able t
 they're 31.69 Earth-years old.
 
 """
+import functools
+
+
 EARTH_SEC_TO_EARTH_YEAR = 31557600
 EARTH_YEAR_TO_PLANET_YEAR = {
     'mercury': 0.2408467,
@@ -43,50 +46,9 @@ class SpaceAge:
         planet_age = self._earth_years / EARTH_YEAR_TO_PLANET_YEAR[planet]
         return round(planet_age, 2)
 
-    def on_mercury(self) -> float:
-        """
-        :return: float: Age in mercury, rounded to 2 decimal places
-        """
-        return self._on_planet('mercury')
+    def __getattr__(self, func_name: str):
+        if func_name.startswith('on_'):
+            planet = func_name[3:]
+            return functools.partial(self._on_planet, planet)
 
-    def on_venus(self) -> float:
-        """
-        :return: float: Age in venus, rounded to 2 decimal places
-        """
-        return self._on_planet('venus')
-
-    def on_earth(self) -> float:
-        """
-        :return: float: Age in earth, rounded to 2 decimal places
-        """
-        return self._on_planet('earth')
-
-    def on_mars(self) -> float:
-        """
-        :return: float: Age in mars, rounded to 2 decimal places
-        """
-        return self._on_planet('mars')
-
-    def on_jupiter(self) -> float:
-        """
-        :return: float: Age in jupiter, rounded to 2 decimal places
-        """
-        return self._on_planet('jupiter')
-
-    def on_saturn(self) -> float:
-        """
-        :return: float: Age in saturn, rounded to 2 decimal places
-        """
-        return self._on_planet('saturn')
-
-    def on_uranus(self) -> float:
-        """
-        :return: float: Age in uranus, rounded to 2 decimal places
-        """
-        return self._on_planet('uranus')
-
-    def on_neptune(self) -> float:
-        """
-        :return: float: Age in neptune, rounded to 2 decimal places
-        """
-        return self._on_planet('neptune')
+        raise AttributeError(f"No such attribute {func_name} in {self.__class__.__name__}")
