@@ -44,21 +44,28 @@ class PhoneNumber:
         self._sms_num = None
         self._convert()
 
-    @staticmethod
-    def _validate(number: str):
+    def _validate(self, number: str):
         patt_intl_code = r"(?:(?:\+)?1)"
-        patt_area_n_exch_code = r"(?:[2-9][0-9]{2})"
-        patt_area_n_exch_code_in_paran = fr"(\()?{patt_area_n_exch_code}(?(1)\))"
-        patt_num = r"[0-9]{4}"
+        patt_area_n_exch_code = r"[2-9][0-9]{2}"
+        patt_area_code = fr"(?P<area_code>{patt_area_n_exch_code})"
+        patt_exch_code = fr"(?P<exch_code>{patt_area_n_exch_code})"
+        patt_area_code_in_paran = fr"(\()?{patt_area_code}(?(1)\))"
+        patt_num = r"(?P<subs_num>[0-9]{4})"
         patt_wspace = r"[ ]*"
         patt_sep = fr"{patt_wspace}(?:-|\.)?{patt_wspace}"
+
         patt_full = fr"{patt_wspace}{patt_intl_code}?{patt_wspace}" + \
-                    fr"{patt_area_n_exch_code_in_paran}{patt_sep}" + \
-                    fr"{patt_area_n_exch_code}{patt_sep}" + \
+                    fr"{patt_area_code_in_paran}{patt_sep}" + \
+                    fr"{patt_exch_code}{patt_sep}" + \
                     fr"{patt_num}{patt_wspace}"
 
-        if not re.fullmatch(patt_full, number):
+        match = re.fullmatch(patt_full, number)
+        if not match:
             raise ValueError("Invalid phone number format")
+
+        self.area_code = match.group('area_code')
+        self.exchange_code = match.group('exch_code')
+        self.subscriber_number = match.group('subs_num')
 
     @property
     def number(self):
@@ -67,30 +74,6 @@ class PhoneNumber:
         :return: The converted 10-digit SMS number
         """
         return self._sms_num
-
-    @property
-    def area_code(self):
-        """
-
-        :return: The 3-digit area code extracted from the input phone string
-        """
-        return self._sms_num[:3]
-
-    @property
-    def exchange_code(self):
-        """
-
-        :return: The 3-digit exchange code extracted from the input phone string
-        """
-        return self._sms_num[3:6]
-
-    @property
-    def subscriber_number(self):
-        """
-
-        :return: The 4-digit subscriber number extracted from the input phone string
-        """
-        return self._sms_num[6:]
 
     def _convert(self):
         phn_str = "".join([ch for ch in self._phn_str if ch.isdigit()])
