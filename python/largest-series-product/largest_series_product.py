@@ -19,6 +19,7 @@ import functools
 from typing import List
 
 
+# Function copied as-it-is from series/series.py
 def slices(series: str, length: int) -> List[str]:
     """
 
